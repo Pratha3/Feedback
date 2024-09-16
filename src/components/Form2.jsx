@@ -6,11 +6,37 @@ function Form2() {
   let [index, setIndex] = useState(-1);
   let [error, setError] = useState({});
   let [hobby, setHobby] = useState([]);
+  let [search, setSearch] = useState("");
+  let [symbol, setSymbol] = useState("");
   useEffect(() => {
     let oldList = JSON.parse(localStorage.getItem("studentList")) || [];
     setList(oldList);
   }, [setList]);
+  let handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
+  let sortBy = (type) => {
+    let newList = [];
+    if (type == "name") {
+      if (symbol == "" || symbol == "^") {
+        newList = list.sort((a, b) => b.name.localeCompare(a.name));
+        setSymbol("v");
+      } else {
+        newList = list.sort((a, b) => a.name.localeCompare(b.name));
+        setSymbol("^");
+      }
+    } else if (type == "email") {
+      if (symbol == "" || symbol == "^") {
+        newList = list.sort((a, b) => b.email.localeCompare(a.email));
+        setSymbol("v");
+      } else {
+        newList = list.sort((a, b) => a.email.localeCompare(b.email));
+        setSymbol("^");
+      }
+    }
 
+    setList(newList);
+  };
   let handleClick = (e) => {
     e.target.style.fontSize = "38px";
     e.target.style.color = "red";
@@ -86,14 +112,6 @@ function Form2() {
     setHobby(editStud.hobby);
   };
 
-  // let obj = [
-  //   {
-  //     name: "dhava;",
-  //     email: "dhaval@gmail.com"
-  //   }
-  // ]
-
-  // localStorage.setItem('studentList', JSON.stringify(obj));
   return (
     <>
       <h2 style={{ textAlign: "center" }} onClick={(e) => handleClick(e)}>
@@ -194,30 +212,48 @@ function Form2() {
           </tbody>
         </table>
       </form>
-      <br /> <br />
+      <br />
+      <div style={{ textAlign: "center" }}>
+        <input type="text" onChange={handleSearch} />
+      </div>
+      <br />
       <table border={1} align="center">
         <tbody>
           <tr>
             <td>Id</td>
-            <td>Name</td>
-            <td>Email</td>
+            <button onClick={() => sortBy("name")}> Name {symbol}</button>
+            <button onClick={() => sortBy("email")}>Email {symbol}</button>
             <td>Hobby</td>
             <td>Action</td>
           </tr>
-          {list.map((v, i) => {
-            return (
-              <tr key={i}>
-                <td>{v.id}</td>
-                <td>{v.name}</td>
-                <td>{v.email}</td>
-                <td>{v.hobby ? v.hobby.toString() : "No Hobby."}</td>
-                <td>
-                  <button onClick={() => deleteData(i)}>Delete</button>
-                  <button onClick={() => editData(i)}>Edit</button>
-                </td>
-              </tr>
-            );
-          })}
+          {list
+            .filter((val, idx) => {
+              if (search == "") {
+                return val;
+              } else if (
+                val.name.toLocaleLowerCase().match(search.toLocaleLowerCase())
+              ) {
+                return val;
+              } else if (
+                val.email.toLocaleLowerCase().match(search.toLocaleLowerCase())
+              ) {
+                return val;
+              }
+            })
+            .map((v, i) => {
+              return (
+                <tr key={i}>
+                  <td>{v.id}</td>
+                  <td>{v.name}</td>
+                  <td>{v.email}</td>
+                  <td>{v.hobby ? v.hobby.toString() : "No Hobby."}</td>
+                  <td>
+                    <button onClick={() => deleteData(i)}>Delete</button>
+                    <button onClick={() => editData(i)}>Edit</button>
+                  </td>
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </>
