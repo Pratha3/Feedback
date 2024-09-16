@@ -8,6 +8,13 @@ function Form2() {
   let [hobby, setHobby] = useState([]);
   let [search, setSearch] = useState("");
   let [symbol, setSymbol] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
+  //pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = list.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPage = Math.ceil(list.length / itemsPerPage);
   useEffect(() => {
     let oldList = JSON.parse(localStorage.getItem("studentList")) || [];
     setList(oldList);
@@ -226,7 +233,8 @@ function Form2() {
             <td>Hobby</td>
             <td>Action</td>
           </tr>
-          {list
+
+          {currentItems
             .filter((val, idx) => {
               if (search == "") {
                 return val;
@@ -254,6 +262,34 @@ function Form2() {
                 </tr>
               );
             })}
+          <tr>
+            <td>
+              {currentPage > 1 ? (
+                <button onClick={() => setCurrentPage(currentPage - 1)}>
+                  prev
+                </button>
+              ) : (
+                ""
+              )}
+              {[...Array(totalPage)].map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentPage(index + 1)}
+                  className={currentPage == index + 1 ? "active" : ""}
+                >
+                  {index + 1}
+                </button>
+              ))}
+
+              {currentPage < totalPage ? (
+                <button onClick={() => setCurrentPage(currentPage + 1)}>
+                  next
+                </button>
+              ) : (
+                ""
+              )}
+            </td>
+          </tr>
         </tbody>
       </table>
     </>
