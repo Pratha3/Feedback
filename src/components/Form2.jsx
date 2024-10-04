@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Form2() {
   let [student, setStudent] = useState({});
@@ -10,18 +11,20 @@ function Form2() {
   let [symbol, setSymbol] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
-  //pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = list.slice(indexOfFirstItem, indexOfLastItem);
   const totalPage = Math.ceil(list.length / itemsPerPage);
+
   useEffect(() => {
     let oldList = JSON.parse(localStorage.getItem("studentList")) || [];
     setList(oldList);
   }, [setList]);
+
   let handleSearch = (e) => {
     setSearch(e.target.value);
   };
+
   let sortBy = (type) => {
     let newList = [];
     if (type == "name") {
@@ -41,17 +44,10 @@ function Form2() {
         setSymbol("^");
       }
     }
-
     setList(newList);
-  };
-  let handleClick = (e) => {
-    e.target.style.fontSize = "38px";
-    e.target.style.color = "red";
   };
 
   let handleInput = (e) => {
-    // let name = e.target.name;
-    // let value = e.target.value;
     let { name, value } = e.target;
     let newHobby = [...hobby];
     if (name == "hobby") {
@@ -61,15 +57,10 @@ function Form2() {
         let pos = newHobby.findIndex((v, i) => v == value);
         newHobby.splice(pos, 1);
       }
-
       value = newHobby;
-
-      console.log(newHobby);
     }
-
     setHobby(newHobby);
     setStudent({ ...student, [name]: value });
-    // console.log(student);
   };
 
   let dataValidation = () => {
@@ -86,11 +77,7 @@ function Form2() {
 
   let handleSubmit = (e) => {
     e.preventDefault();
-
-    // if (!dataValidation()) return;
-
     let newList;
-
     if (index != -1) {
       list[index] = student;
       newList = [...list];
@@ -113,7 +100,6 @@ function Form2() {
 
   let editData = (pos) => {
     let editStud = list[pos];
-    console.log(editStud);
     setStudent(editStud);
     setIndex(pos);
     setHobby(editStud.hobby);
@@ -121,24 +107,26 @@ function Form2() {
 
   return (
     <>
-      <h2 style={{ textAlign: "center" }} onClick={(e) => handleClick(e)}>
-        Student Registration
-      </h2>
-      <form method="post" onSubmit={(e) => handleSubmit(e)}>
-        <table border={1} align="center">
+      <h2 className="text-center my-4">Student Registration</h2>
+      <form
+        className="container"
+        method="post"
+        onSubmit={(e) => handleSubmit(e)}
+      >
+        <table className="table table-bordered">
           <tbody>
             <tr>
-              <td>id</td>
+              <td>Id</td>
               <td>
                 <input
+                  className="form-control"
                   type="text"
                   name="id"
-                  id=""
                   value={student.id || ""}
                   onChange={(e) => handleInput(e)}
                 />
                 {error.id ? (
-                  <span style={{ color: "red" }}>{error.id}</span>
+                  <span className="text-danger">{error.id}</span>
                 ) : null}
               </td>
             </tr>
@@ -146,13 +134,14 @@ function Form2() {
               <td>Name</td>
               <td>
                 <input
+                  className="form-control"
                   type="text"
                   name="name"
                   value={student.name ? student.name : ""}
                   onChange={(e) => handleInput(e)}
                 />
                 {error.name ? (
-                  <span style={{ color: "red" }}>{error.name}</span>
+                  <span className="text-danger">{error.name}</span>
                 ) : null}
               </td>
             </tr>
@@ -160,57 +149,110 @@ function Form2() {
               <td>Email</td>
               <td>
                 <input
+                  className="form-control"
                   type="text"
                   name="email"
                   value={student.email ? student.email : ""}
                   onChange={(e) => handleInput(e)}
                 />
                 {error.email ? (
-                  <span style={{ color: "red" }}>{error.email}</span>
+                  <span className="text-danger">{error.email}</span>
+                ) : null}
+              </td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td>
+                <input
+                  className="form-control"
+                  type="password"
+                  name="password"
+                  value={student.password || ""}
+                  onChange={(e) => handleInput(e)}
+                />
+                {error.password ? (
+                  <span className="text-danger">{error.password}</span>
                 ) : null}
               </td>
             </tr>
             <tr>
               <td>Hobby</td>
               <td>
-                <input
-                  type="checkbox"
-                  name="hobby"
-                  value="dance"
-                  onChange={handleInput}
-                  checked={hobby.includes("dance") ? "checked" : ""}
+                {["dance", "music", "karate", "yoga"].map((hobbyItem, idx) => (
+                  <div className="form-check form-check-inline" key={idx}>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      name="hobby"
+                      value={hobbyItem}
+                      onChange={handleInput}
+                      checked={hobby.includes(hobbyItem) ? "checked" : ""}
+                    />
+                    <label className="form-check-label">{hobbyItem}</label>
+                  </div>
+                ))}
+              </td>
+            </tr>
+            <tr>
+              <td>Gender</td>
+              <td>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="gender"
+                    value="male"
+                    checked={student.gender == "male"}
+                    onChange={(e) => handleInput(e)}
+                  />
+                  <label className="form-check-label">Male</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="gender"
+                    value="female"
+                    checked={student.gender == "female"}
+                    onChange={(e) => handleInput(e)}
+                  />
+                  <label className="form-check-label">Female</label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>City</td>
+              <td>
+                <select
+                  className="form-select"
+                  name="city"
+                  value={student.city || ""}
+                  onChange={(e) => handleInput(e)}
+                >
+                  <option value="">Select City</option>
+                  <option value="surat">Surat</option>
+                  <option value="Baroda">Baroda</option>
+                  <option value="Vapi">Vapi</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>Address</td>
+              <td>
+                <textarea
+                  className="form-control"
+                  rows={3}
+                  name="address"
+                  value={student.address || ""}
+                  onChange={(e) => handleInput(e)}
                 />
-                dance
-                <input
-                  type="checkbox"
-                  name="hobby"
-                  value="music"
-                  onChange={handleInput}
-                  checked={hobby.includes("music") ? "checked" : ""}
-                />
-                music
-                <input
-                  type="checkbox"
-                  name="hobby"
-                  value="karate"
-                  onChange={handleInput}
-                  checked={hobby.includes("karate") ? "checked" : ""}
-                />
-                karate
-                <input
-                  type="checkbox"
-                  name="hobby"
-                  value="yoga"
-                  onChange={handleInput}
-                  checked={hobby.includes("yoga") ? "checked" : ""}
-                />
-                yoga
               </td>
             </tr>
             <tr>
               <td></td>
               <td>
                 <input
+                  className="btn btn-primary"
                   type="submit"
                   value={index != -1 ? "Edit Data" : "Add Data"}
                 />
@@ -219,79 +261,75 @@ function Form2() {
           </tbody>
         </table>
       </form>
-      <br />
-      <div style={{ textAlign: "center" }}>
-        <input type="text" onChange={handleSearch} />
+
+      <div className="container my-4 text-center">
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Search..."
+          onChange={handleSearch}
+        />
       </div>
-      <br />
-      <table border={1} align="center">
+
+      <table className="table table-bordered table-hover">
+        <thead className="table-dark">
+          <tr>
+            <th>Id</th>
+            <th>
+              <button className="btn btn-light" onClick={() => sortBy("name")}>
+                Name {symbol}
+              </button>
+            </th>
+            <th>
+              <button className="btn btn-light" onClick={() => sortBy("email")}>
+                Email {symbol}
+              </button>
+            </th>
+            <th>Action</th>
+          </tr>
+        </thead>
         <tbody>
-          <tr>
-            <td>Id</td>
-            <button onClick={() => sortBy("name")}> Name {symbol}</button>
-            <button onClick={() => sortBy("email")}>Email {symbol}</button>
-            <td>Hobby</td>
-            <td>Action</td>
-          </tr>
-
           {currentItems
-            .filter((val, idx) => {
-              if (search == "") {
-                return val;
-              } else if (
-                val.name.toLocaleLowerCase().match(search.toLocaleLowerCase())
-              ) {
-                return val;
-              } else if (
-                val.email.toLocaleLowerCase().match(search.toLocaleLowerCase())
-              ) {
-                return val;
-              }
-            })
-            .map((v, i) => {
-              return (
-                <tr key={i}>
-                  <td>{v.id}</td>
-                  <td>{v.name}</td>
-                  <td>{v.email}</td>
-                  <td>{v.hobby ? v.hobby.toString() : "No Hobby."}</td>
-                  <td>
-                    <button onClick={() => deleteData(i)}>Delete</button>
-                    <button onClick={() => editData(i)}>Edit</button>
-                  </td>
-                </tr>
-              );
-            })}
-          <tr>
-            <td>
-              {currentPage > 1 ? (
-                <button onClick={() => setCurrentPage(currentPage - 1)}>
-                  prev
-                </button>
-              ) : (
-                ""
-              )}
-              {[...Array(totalPage)].map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentPage(index + 1)}
-                  className={currentPage == index + 1 ? "active" : ""}
-                >
-                  {index + 1}
-                </button>
-              ))}
-
-              {currentPage < totalPage ? (
-                <button onClick={() => setCurrentPage(currentPage + 1)}>
-                  next
-                </button>
-              ) : (
-                ""
-              )}
-            </td>
-          </tr>
+            .filter((item) =>
+              item.name.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((item, idx) => (
+              <tr key={idx}>
+                <td>{item.id}</td>
+                <td>{item.name}</td>
+                <td>{item.email}</td>
+                <td>
+                  <button
+                    className="btn btn-info"
+                    onClick={() => editData(indexOfFirstItem + idx)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger ms-2"
+                    onClick={() => deleteData(indexOfFirstItem + idx)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
+
+      <div className="text-center my-3">
+        {Array.from({ length: totalPage }, (_, i) => i + 1).map((p) => (
+          <button
+            className={`btn btn-sm mx-1 ${
+              currentPage == p ? "btn-primary" : "btn-light"
+            }`}
+            key={p}
+            onClick={() => setCurrentPage(p)}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
     </>
   );
 }

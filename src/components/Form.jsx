@@ -11,11 +11,6 @@ function Form() {
     setList(oldList);
   }, [setList]);
 
-  let handleClick = (e) => {
-    e.target.style.fontSize = "38px";
-    e.target.style.color = "red";
-  };
-
   let handleInput = (e) => {
     // let name = e.target.name;
     // let value = e.target.value;
@@ -69,19 +64,9 @@ function Form() {
     setIndex(pos);
   };
 
-  // let obj = [
-  //   {
-  //     name: "dhava;",
-  //     email: "dhaval@gmail.com"
-  //   }
-  // ]
-
-  // localStorage.setItem('studentList', JSON.stringify(obj));
   return (
     <>
-      <h2 style={{ textAlign: "center" }} onClick={(e) => handleClick(e)}>
-        Student Registration
-      </h2>
+      <h2 style={{ textAlign: "center" }}>Student Registration</h2>
       <form method="post" onSubmit={(e) => handleSubmit(e)}>
         <table border={1} align="center">
           <tbody>
